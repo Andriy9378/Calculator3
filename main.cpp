@@ -1,6 +1,14 @@
 #include <iostream>
 #include "calculator.h"
 
+enum class Operators : char
+{
+	Add = '+', Minus = '-', Multiple = '*',
+	Division = '/', Pow = '^', Equal = '=',
+	Save = 's', Load = 'l', Set = ':',
+	Clear = 'c', Negative = 'n', Quit = 'q'
+};
+
 bool RunCalculatorCycle();
 bool ReadNumber(Number& result);
 
@@ -13,6 +21,8 @@ int main()
 
 bool RunCalculatorCycle()
 {
+	Operators op;
+
 	bool use_safe = false;
 	Number init_number;
 	if (!ReadNumber(init_number))
@@ -25,96 +35,77 @@ bool RunCalculatorCycle()
 	{
 		Number right;
 
-		if (symbols == "+")
+		char char_symbols = symbols.at(0);
+		Operators op = static_cast<Operators>(char_symbols);
+
+		switch (op)
 		{
+		case Operators::Add:
 			if (!ReadNumber(right))
 				return false;
 			c.Add(right);
-		}
-
-		else if (symbols == "-")
-		{
+			break;
+		case Operators::Minus:
 			if (!ReadNumber(right))
 				return false;
 			c.Sub(right);
-		}
-
-		else if (symbols == "*")
-		{
+			break;
+		case Operators::Multiple:
 			if (!ReadNumber(right))
 				return false;
 			c.Mul(right);
-		}
-
-		else if (symbols == "/")
-		{
+			break;
+		case Operators::Division:
 			if (!ReadNumber(right))
 				return false;
 			c.Div(right);
-		}
-
-		else if (symbols == "**")
-		{
+			break;
+		case Operators::Pow:
 			if (!ReadNumber(right))
 				return false;
 			c.Pow(right);
-		}
-
-		else if (symbols == "=")
-		{
+			break;
+		case Operators::Equal:
 			std::cout << c.GetNumberRepr() << std::endl;
-		}
-
-		else if (symbols == "s")
-		{
+			break;
+		case Operators::Save:
 			if (!use_safe)
 				use_safe = true;
-
 			c.Save();
-		}
-
-		else if (symbols == "l")
-		{
+			break;
+		case Operators::Load:
 			if (use_safe)
+			{
 				c.Load();
-
+				break;
+			}
 			else
 			{
 				std::cerr << "Error: Memory is emptry";
 				return false;
 			}
-		}
-
-		else if (symbols == ":")
-		{
+		case Operators::Set:
 			if (!ReadNumber(right))
 				return false;
 			c.Set(right);
-		}
-
-		else if (symbols == "c")
-		{
+			break;
+		case Operators::Clear:
 			c.Clear();
-		}
-
-		else if (symbols == "n")
-		{
+			break;
+		case Operators::Negative:
 			if (!ReadNumber(right))
 				return false;
 			c.Set(-c.GetNumber());
-		}
-
-		else if (symbols == "q")
-		{
+			break;
+		case Operators::Quit:
 			return true;
-		}
-
-		else
-		{
+		default:
 			std::cerr << "Error: Unknown token" << " " << symbols;
 			return false;
 		}
 	}
+
+	return false;
 }
 
 bool ReadNumber(Number& result)
